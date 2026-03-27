@@ -1,0 +1,8 @@
+
+tracker_type: bytetrack
+track_high_thresh: 0.6      # only high confidence detections start new tracks
+track_low_thresh: 0.1       # low confidence detections can continue existing tracks
+new_track_thresh: 0.7       # even higher bar to create a brand new ID
+track_buffer: 60            # remember a lost ID for 60 frames before dropping it
+match_thresh: 0.7           # how similar boxes need to be to match (higher = stricter)
+fuse_score: True
