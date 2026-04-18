@@ -8,10 +8,10 @@ VIDEO_PATH = "test_video4.mp4"
 MODEL_PATH = "yolo26n.pt"
 
 # --- Re-locking tuning knobs ---
-SCENE_CUT_THRESHOLD = 0.6      # histogram correlation below this = camera cut
+SCENE_CUT_THRESHOLD = 0.6      # histogram correlation below this = camera cut (camera view changed suddenly)
 MISSING_FRAMES_RELOCK = 10     # both fighters missing this long = trigger re-lock (fallback)
-MIN_MATCH_SCORE = 0.5          # min histogram correlation to accept a re-lock match
-SIG_UPDATE_WEIGHT = 0.1        # EMA weight for slowly refreshing stored signatures
+MIN_MATCH_SCORE = 0.5          # min histogram correlation to accept a re-lock match (only accept a re-lock if the match score is at least 0.5)
+SIG_UPDATE_WEIGHT = 0.1        # this parameter controls how fast that signature changes (refreshing stored signatures over time)
 INITIAL_LOCK_FRAMES = 20       # frames to wait before locking initially
 
 excluded_landmarks = list(range(0, 11)) + list(range(25, 33))
@@ -23,18 +23,19 @@ def box_area(box):
     return (x2 - x1) * (y2 - y1)
 
 
-def torso_crop(img, box):
-    """Take the middle 60% of the bounding box (mostly torso, avoids head/legs/background)."""
+def torso_crop(img, box): # can anything else be done here to fix locking on correct fighter 
+    """Take the middle 60% of the bounding box (mostly torso and shorts, avoids head/legs/background)."""
     x1, y1, x2, y2 = box
     bw, bh = x2 - x1, y2 - y1
     tx1 = x1 + int(bw * 0.2)
     tx2 = x2 - int(bw * 0.2)
-    ty1 = y1 + int(bh * 0.25)
-    ty2 = y2 - int(bh * 0.35)
+    ty1 = y1 + int(bh * 0.30) # (maybe we need to do more) it was0.25 
+    ty2 = y2 - int(bh * 0.20) # (maybe we need to do more) it was0.35 
+    # have in mind that fighters are different height - but do boxes adjust for that?
     crop = img[max(0, ty1):ty2, max(0, tx1):tx2]
     return crop
 
-
+# building histogram for each fighter - hopefully calculates color of shorts for the hist value
 def appearance_signature(img, box):
     """HSV color histogram of the torso region. Returns None if crop is empty."""
     crop = torso_crop(img, box)
@@ -44,7 +45,7 @@ def appearance_signature(img, box):
     # 2D hist over hue + saturation (ignore value to be lighting-robust)
     hist = cv2.calcHist([hsv], [0, 1], None, [30, 32], [0, 180, 0, 256])
     cv2.normalize(hist, hist, 0, 1, cv2.NORM_MINMAX)
-    return hist
+    return hist 
 
 
 def hist_similarity(h1, h2):
@@ -52,7 +53,7 @@ def hist_similarity(h1, h2):
         return 0.0
     return cv2.compareHist(h1, h2, cv2.HISTCMP_CORREL)
 
-
+# used to detect camera cuts/angle switch
 def frame_signature(img):
     """Coarse grayscale histogram of the whole frame, for scene-cut detection."""
     small = cv2.resize(img, (160, 90))
@@ -62,6 +63,7 @@ def frame_signature(img):
     return hist
 
 
+# GO THROUGH THIS
 class FighterTracker:
     def __init__(self, fighter_id):
         self.fighter_id = fighter_id
@@ -85,13 +87,13 @@ class FighterTracker:
             return
         ch, cw = crop.shape[:2]
 
-        results = self.pose.process(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB))
+        results = self.pose.process(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)) # results is MediaPipe object (self.pose = mpPose.Pose...)
         if not results.pose_landmarks:
             return
 
         frame_data = {"frame": frame_count, "fighter": self.fighter_id, "landmarks": []}
-
-        for id, lm in enumerate(results.pose_landmarks.landmark):
+        # id is index for body part
+        for id, lm in enumerate(results.pose_landmarks.landmark): # lm is landmark object (x,y,z, visibility)
             if id not in excluded_landmarks:
                 cx = int(lm.x * cw) + x1
                 cy = int(lm.y * ch) + y1
@@ -221,6 +223,15 @@ while True:
     if results[0].boxes is not None and results[0].boxes.id is not None:
         for box, track_id in zip(results[0].boxes.xyxy, results[0].boxes.id):
             x1, y1, x2, y2 = map(int, box)
+
+            pad_x = int((x2 - x1) * 0.3)   # 30% width padding
+            pad_y = int((y2 - y1) * 0.1)   # 10% height padding
+
+            x1 = max(0, x1 - pad_x)
+            y1 = max(0, y1 - pad_y)
+            x2 = min(w, x2 + pad_x)
+            y2 = min(h, y2 + pad_y)
+
             tid = int(track_id)
             if box_area((x1, y1, x2, y2)) < 0.04 * w * h:
                 continue
