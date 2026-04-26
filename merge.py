@@ -15,7 +15,7 @@ DATA_COLLECTION_DIR = "data_collection"
 
 # Set to True to wipe all data_collection contents before each run.
 # Set to False to keep accumulating data across runs.
-CLEAR_DATA_ON_RUN = False
+CLEAR_DATA_ON_RUN = True
 
 # ============================================================
 # TRACKING / RE-LOCKING TUNING
