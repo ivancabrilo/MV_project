@@ -9,7 +9,7 @@ import numpy as np
 from collections import deque
 from ultralytics import YOLO
 # try
-VIDEO_PATH = "test_video5.mp4"
+VIDEO_PATH = "video_data/test_video2.mp4"
 MODEL_PATH = "yolo26n.pt"
 DATA_COLLECTION_DIR = "data_collection"
 

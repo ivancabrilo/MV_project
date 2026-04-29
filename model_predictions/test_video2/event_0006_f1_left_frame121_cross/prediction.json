@@ -1,0 +1,37 @@
+{
+  "fighter": 1,
+  "arm": "left",
+  "peak_frame": 121,
+  "window_start": 107,
+  "window_end": 133,
+  "model_label": "cross",
+  "final_label": "cross",
+  "model_prediction": "cross",
+  "actual_label": "cross",
+  "actual_peak_frame": 121,
+  "actual_frame_delta": 0,
+  "actual_path": "/Users/ivancabrilo/Desktop/UofR/Spring 2026/CSC 449/MV_FINAL_PROJECT/data_collection/test_video2/punch_0006_f1_left_frame121/features.json",
+  "confidence": 0.5976003597727091,
+  "probabilities": {
+    "cross": 0.5976003597727091,
+    "hook": 0.01552190917579905,
+    "jab": 0.05441789739229472,
+    "no_punch": 0.3088026898145373,
+    "overhand": 0.0,
+    "uppercut": 0.023657143844659435
+  },
+  "features": {
+    "duration_frames": 7,
+    "extension_start": 0.8015985078012007,
+    "extension_peak": 1.059380879587884,
+    "extension_delta": 0.2577823717866834,
+    "relative_wrist_travel": 0.2622283399105072,
+    "relative_wrist_speed": 0.03746119141578674,
+    "elbow_angle_start": 75.17383888249107,
+    "elbow_angle_peak": 109.28642285247359,
+    "elbow_angle_delta": 34.11258396998252,
+    "toward_score": null,
+    "opponent_distance_delta": null,
+    "hip_rotation_delta": 3.1235484749373086
+  }
+}

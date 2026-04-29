@@ -1,0 +1,37 @@
+{
+  "fighter": 1,
+  "arm": "left",
+  "peak_frame": 554,
+  "window_start": 540,
+  "window_end": 566,
+  "model_label": "no_punch",
+  "final_label": "no_punch",
+  "model_prediction": "no_punch",
+  "actual_label": null,
+  "actual_peak_frame": null,
+  "actual_frame_delta": null,
+  "actual_path": null,
+  "confidence": 0.6096130885916748,
+  "probabilities": {
+    "cross": 0.11665330172669688,
+    "hook": 0.10125604797461599,
+    "jab": 0.11728629826657998,
+    "no_punch": 0.6096130885916748,
+    "overhand": 0.03854787420410703,
+    "uppercut": 0.01664338923632566
+  },
+  "features": {
+    "duration_frames": 6,
+    "extension_start": 1.0777145076630152,
+    "extension_peak": 1.423501160753799,
+    "extension_delta": 0.3457866530907838,
+    "relative_wrist_travel": 0.41909727454185486,
+    "relative_wrist_speed": 0.06984954575697581,
+    "elbow_angle_start": 126.22387723083392,
+    "elbow_angle_peak": 115.16410354663283,
+    "elbow_angle_delta": -11.05977368420109,
+    "toward_score": 0.7731660604476929,
+    "opponent_distance_delta": 0.023152211169879176,
+    "hip_rotation_delta": 15.175914000226726
+  }
+}

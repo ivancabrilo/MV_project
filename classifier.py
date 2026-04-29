@@ -51,14 +51,14 @@ print(df)
 print(df.head())
 print(df["label"].value_counts())
 
-valid_types = ["jab", "cross", "hook", "uppercut", "overhand"]
+valid_types = ["jab", "cross", "hook", "uppercut", "overhand", "no_punch"]
 
 df = df[df["label"].isin(valid_types)]
 
 X = df.drop(columns=["label", "fighter"])
 y = df["label"]
 
-valid_types = ["jab", "cross", "hook", "uppercut", "overhand"]
+valid_types = ["jab", "cross", "hook", "uppercut", "overhand", "no_punch"]
 
 df = df[df["label"].isin(valid_types)]
 

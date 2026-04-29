@@ -1,0 +1,6 @@
+actual\predicted,cross,hook,jab,no_punch,uppercut
+cross,24,2,3,0,0
+hook,0,13,1,1,3
+jab,1,3,20,11,1
+no_punch,4,3,3,37,2
+uppercut,1,1,2,1,11
