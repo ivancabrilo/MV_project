@@ -1,6 +1,7 @@
-PoseVideos/
 .venv/
 data_collection/
 video_data/
 PoseEstimationMin.py
 code_understand.py
+landmarks_fighter_1.json
+landmarks_fighter_0.json
