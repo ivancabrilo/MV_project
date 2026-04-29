@@ -9,19 +9,19 @@ import numpy as np
 from collections import deque
 from ultralytics import YOLO
 # try
-VIDEO_PATH = "test_video2.mp4"
+VIDEO_PATH = "test_video5.mp4"
 MODEL_PATH = "yolo26n.pt"
 DATA_COLLECTION_DIR = "data_collection"
 
 # Set to True to wipe all data_collection contents before each run.
 # Set to False to keep accumulating data across runs.
-CLEAR_DATA_ON_RUN = True
+CLEAR_DATA_ON_RUN = False
 
 # ============================================================
 # TRACKING / RE-LOCKING TUNING
 # ============================================================
 
-SCENE_CUT_THRESHOLD = 0.6
+SCENE_CUT_THRESHOLD = 0.8 # was 0.6
 MISSING_FRAMES_RELOCK = 10
 SINGLE_FIGHTER_MISSING_UNLOCK = 6
 MIN_MATCH_SCORE = 0.5
@@ -33,19 +33,19 @@ MIN_SEPARATION_RATIO = 0.18
 # PUNCH DETECTION TUNING
 # ============================================================
 
-SCENE_CUT_IGNORE_FRAMES = 8
+SCENE_CUT_IGNORE_FRAMES = 5 # inspect this - it was 8
 CLIP_FRAMES_BEFORE = 14
 CLIP_FRAMES_AFTER = 12
 PUNCH_LOOKBACK_FRAMES = 7
 PUNCH_CONFIRM_AFTER = 2
-MIN_ARM_VISIBILITY = 0.35 # was 0.45
+MIN_ARM_VISIBILITY = 0.45 
 MIN_EXTENSION_DELTA = 0.12
-MIN_PEAK_EXTENSION = 0.90
+MIN_PEAK_EXTENSION = 0.80
 MIN_REL_WRIST_TRAVEL = 0.14
 MIN_ABS_WRIST_TRAVEL = 0.16
 MIN_REL_WRIST_SPEED = 0.020
 MIN_ELBOW_ANGLE_AT_PEAK = 70
-SAME_ARM_DEBOUNCE_FRAMES = 5
+SAME_ARM_DEBOUNCE_FRAMES = 10
 SMOOTH_ALPHA = 0.50 #0.6
 RAW_FRAME_BUFFER_SIZE = 120
 LANDMARK_HISTORY_SIZE = 160
@@ -83,6 +83,9 @@ def box_center_x(box):
 def box_center(box):
     x1, y1, x2, y2 = box
     return ((x1 + x2) / 2.0, (y1 + y2) / 2.0)
+
+def angle_delta_deg(a, b):
+    return (a - b + 180) % 360 - 180
 
 def iou(box_a, box_b):
     ax1, ay1, ax2, ay2 = box_a
@@ -369,7 +372,7 @@ class SimplePunchDetector:
             lh_start = start_snap["L_HIP"]; rh_start = start_snap["R_HIP"]
             hip_angle_peak = math.degrees(math.atan2(rh_peak[1]-lh_peak[1], rh_peak[0]-lh_peak[0]))
             hip_angle_start = math.degrees(math.atan2(rh_start[1]-lh_start[1], rh_start[0]-lh_start[0]))
-            hip_rotation_delta = hip_angle_peak - hip_angle_start
+            hip_rotation_delta = angle_delta_deg(hip_angle_peak, hip_angle_start)
 
             is_punch = (opp_gate
                         and 2 <= dur <= 12
@@ -627,7 +630,7 @@ pending_events = []
 clip_counter = 1
 
 while True:
-    success, img = cap.read()
+    success, img = cap.read() # goes through entire video 1 frame of per loop,
     if not success:
         break
 
@@ -640,6 +643,7 @@ while True:
     if prev_frame_sig is not None:
         if cv2.compareHist(prev_frame_sig, cur_frame_sig, cv2.HISTCMP_CORREL) < SCENE_CUT_THRESHOLD:
             scene_cut = True
+            print("SCENE CUT")
     prev_frame_sig = cur_frame_sig
 
     if scene_cut:
@@ -719,7 +723,7 @@ while True:
         x1, y1, x2, y2 = box
         color = (0, 255, 0) if i == 0 else (0, 0, 255)
         cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
-        cv2.putText(img, f"Fighter {i+1}", (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+        cv2.putText(img, f"Fighter {i}", (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, SCENE_CUT_THRESHOLD, color, 2)
 
         opp_box = None
         other_fid = locked_ids[1 - i]

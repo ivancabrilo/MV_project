@@ -1,2 +1,6 @@
 PoseVideos/
 .venv/
+.data_collection
+.video_data
+.PoseEstimationMin.py
+.code_understand.py

@@ -1,0 +1,23 @@
+{
+  "fighter": 1,
+  "arm": "right",
+  "peak_frame": 10359,
+  "window_start": 10345,
+  "window_end": 10371,
+  "punch": false,
+  "punch_type": "none",
+  "features": {
+    "duration_frames": 7,
+    "extension_start": 0.41104146466263086,
+    "extension_peak": 1.1166363204867837,
+    "extension_delta": 0.7055948558241529,
+    "relative_wrist_travel": 0.7899391651153564,
+    "relative_wrist_speed": 0.11284845215933663,
+    "elbow_angle_start": 151.43792698993116,
+    "elbow_angle_peak": 148.31591495686246,
+    "elbow_angle_delta": -3.1220120330686996,
+    "toward_score": 0.02878769487142563,
+    "opponent_distance_delta": -0.1968881802475125,
+    "hip_rotation_delta": -16.803658852774618
+  }
+}
