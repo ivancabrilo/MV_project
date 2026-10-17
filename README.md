@@ -1,11 +1,6 @@
 # Fight Punch Classification Pipeline
 
-<!--
-Add a short GIF of the punch recording / model demo here.
-
-Example:
-![Punch recording demo](assets/punch-recording.gif)
--->
+![Fighter tracking, pose estimation, and punch classification](demos/fight-demo-github.gif)
 
 ## Overview
 
